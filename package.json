@@ -27,6 +27,7 @@
     "@nestjs/microservices": "^10.3.1",
     "@nestjs/platform-express": "^10.0.0",
     "class-validator": "^0.14.1",
+    "kafkajs": "^2.2.4",
     "node-eventstore-client": "^22.10.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"

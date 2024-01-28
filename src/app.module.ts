@@ -18,7 +18,9 @@ import { OrderCreatedEvent, OrderUpdatedEvent } from './notification/events/impl
         port: parseInt(configService.get('EVENTSTORE_PORT', '1113'), 10),
       }),
       subscriptions: {
-        orders: '$ce-orders',
+        orders__order_updated_event: '$et-OrderUpdatedEvent',
+        orders__order_created_event: '$et-OrderCreatedEvent',
+        notifications: '$ce-notifications',
       },
       transformers: {
         OrderCreatedEvent:
