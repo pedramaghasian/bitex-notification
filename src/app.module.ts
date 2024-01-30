@@ -3,11 +3,30 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { EventStoreModule } from './notification/eventstore/eventstore.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotificationModule } from './notification/notification.module';
-import { OrderCreatedEvent, OrderUpdatedEvent } from './notification/events/impl';
+import {
+  OrderCreatedEvent,
+  OrderUpdatedEvent,
+} from './notification/events/impl';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     CqrsModule,
+    ClientsModule.register([
+      {
+        name: 'KAFKA',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'kafka_client_id',
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'kafka_group_id',
+          },
+        },
+      },
+    ]),
     EventStoreModule.registerAsync({
       imports: [ConfigModule, CqrsModule],
       inject: [ConfigService],
@@ -23,13 +42,13 @@ import { OrderCreatedEvent, OrderUpdatedEvent } from './notification/events/impl
         notifications: '$ce-notifications',
       },
       transformers: {
-        OrderCreatedEvent:
-          (event: any) => new OrderCreatedEvent(event.data, event.meta),
-        OrderUpdatedEvent:
-          (event: any) => new OrderUpdatedEvent(event.data, event.meta),
+        OrderCreatedEvent: (event: any) =>
+          new OrderCreatedEvent(event.data, event.meta),
+        OrderUpdatedEvent: (event: any) =>
+          new OrderUpdatedEvent(event.data, event.meta),
       },
     }),
-    NotificationModule
-  ]
+    NotificationModule,
+  ],
 })
-export class AppModule { }
+export class AppModule {}
